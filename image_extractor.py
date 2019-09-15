@@ -1,19 +1,15 @@
 import pytesseract
 import io
-import base64
 from lxml import etree
-from PIL import Image
 import cv2
     
-def get_hocr_output(uploaded_image):
+def get_hocr_output(image_path):
     """
     extract text and metadata from uploaded image
     uploaded_file : in-memory image
     """
-    imgObj = base64.b64encode(uploaded_image.file.read())
-    image_string = io.BytesIO(base64.b64decode(imgObj))
-    image = Image.open(image_string)
-    xml_bytes_object = pytesseract.image_to_pdf_or_hocr(image, extension="hocr", config="--psm 11 ")
+    image = cv2.imread(image_path)
+    xml_bytes_object = pytesseract.image_to_pdf_or_hocr(image, extension="hocr")
     text_and_metadata_list = text_extraction_from_xml(xml_bytes_object)
     json_metadata = create_metadata_json(text_and_metadata_list)
     return json_metadata
